@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'saiprakash02/reactapp'
+        DOCKER_BUILDKIT = '1'
     }
 
     stages {
@@ -29,9 +30,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockercred'){
-                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
-                }
+                    sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
             }
         }
         }
