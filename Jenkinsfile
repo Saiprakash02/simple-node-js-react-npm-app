@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'saiprakash02/reactapp'  // Replace with your Docker Hub username and desired image name
-        DOCKER_CREDENTIALS_ID = 'dockercred'    // Replace with the ID of your Docker credentials in Jenkins
+        DOCKER_IMAGE = 'saiprakash02/reactapp'
+        DOCKER_CREDENTIALS_ID = 'dockercred'
     }
 
     stages {
@@ -16,11 +16,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Set npm cache directory
                     sh 'npm config set cache /tmp/npm-cache --global'
-                    // Clean npm cache
                     sh 'npm cache clean --force'
-                    // Install dependencies
                     sh 'npm install'
                 }
             }
@@ -28,14 +25,15 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'npm test'
+                sh './jenkins/scripts/deliver.sh'
+                input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                sh './jenkins/scripts/kill.sh'
             }
         }
 
         stage('Docker Build') {
             steps {
                 script {
-                    // Build the Docker image using the Dockerfile in the repo
                     sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
                 }
             }
@@ -44,9 +42,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    // Log in to Docker
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        // Push the Docker image
                         sh "docker push ${DOCKER_IMAGE}:${env.BUILD_ID}"
                     }
                 }
