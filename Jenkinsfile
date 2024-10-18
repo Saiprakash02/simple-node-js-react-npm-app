@@ -1,9 +1,12 @@
 pipeline {
-        agent any
-    
+        agent {
+        docker {
+            image 'node:6-alpine'
+            args '-p 3000:3000'
+        }
+        }
         environment {
             DOCKER_IMAGE = 'saiprakash02/reactapp'
-            DOCKER_BUILDKIT = '1'
         }
     
         stages {
