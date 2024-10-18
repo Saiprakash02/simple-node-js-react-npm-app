@@ -1,5 +1,10 @@
 pipeline {
-        agent any
+        agent {
+            docker {
+                image 'arshad200/node-docker:3.0'
+                args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+            }
+        }
         environment {
             DOCKER_IMAGE = 'saiprakash02/reactapp'
         }
