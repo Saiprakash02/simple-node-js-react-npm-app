@@ -16,8 +16,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'npm config set cache /tmp/npm-cache --global'
-                    sh 'npm cache clean --force'
                     sh 'npm install'
                 }
             }
