@@ -1,10 +1,5 @@
 pipeline {
-        agent {
-        docker {
-            image 'node:23-alpine'
-            args '-p 3000:3000'
-        }
-        }
+        agent any
         environment {
             DOCKER_IMAGE = 'saiprakash02/reactapp'
         }
