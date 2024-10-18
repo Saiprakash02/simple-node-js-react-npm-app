@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'saiprakash02/reactapp'
-        DOCKER_CREDENTIALS_ID = 'dockercred'
     }
 
     stages {
@@ -30,7 +29,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: ${DOCKER_CREDENTIALS_ID}){
+                    withDockerRegistry(credentialsId: 'dockercred'){
                         sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
                 }
             }
@@ -39,7 +38,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: ${DOCKER_CREDENTIALS_ID}) {
+                    withDockerRegistry(credentialsId: 'dockercred') {
                         sh "docker push ${DOCKER_IMAGE}:${env.BUILD_ID}"
                     }
                 }
