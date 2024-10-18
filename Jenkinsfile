@@ -32,15 +32,16 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
+                    withDockerRegistry(credentialsId: ${DOCKER_CREDENTIALS_ID}){
+                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
                 }
             }
         }
-
+        }
         stage('Docker Push') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                    withDockerRegistry(credentialsId: ${DOCKER_CREDENTIALS_ID}) {
                         sh "docker push ${DOCKER_IMAGE}:${env.BUILD_ID}"
                     }
                 }
