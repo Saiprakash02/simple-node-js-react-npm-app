@@ -21,8 +21,7 @@ pipeline {
                 steps {
                     script {
                         sh 'rm -rf node_modules'
-                        sh 'npm config set cache /root/.npm --global'
-                        sh 'npm install --loglevel=verbose'
+                        sh 'npm install --loglevel=verbose --unsafe-perm'
                     }
                 }
             }
