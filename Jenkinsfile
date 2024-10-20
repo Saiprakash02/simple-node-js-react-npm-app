@@ -20,8 +20,9 @@ pipeline {
             stage('Build') {
                 steps {
                     script {
-                        sh 'rm -rf /.npm'
-                        sh 'npm install'
+                        sh 'rm -rf node_modules'
+                        sh 'npm config set cache /root/.npm --global'
+                        sh 'npm install --loglevel=verbose'
                     }
                 }
             }
