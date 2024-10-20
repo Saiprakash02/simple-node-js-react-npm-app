@@ -2,7 +2,7 @@ pipeline {
         agent {
             docker {
                 image 'node:lts-buster-slim'
-                args '-p 3000:3000'
+                args '--user root -p 3000:3000'
             }
         }
         environment {
@@ -19,7 +19,7 @@ pipeline {
             stage('Build') {
                 steps {
                     script {
-                        sh 'npm install'
+                        sh 'npm ci'
                     }
                 }
             }
