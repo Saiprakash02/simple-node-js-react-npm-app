@@ -20,7 +20,7 @@ pipeline {
             stage('Build') {
                 steps {
                     script {
-                        sh 'chown -R 111:114 "/.npm"'
+                        sh 'rm -rf /.npm'
                         sh 'npm install'
                     }
                 }
