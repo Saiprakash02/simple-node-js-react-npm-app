@@ -1,9 +1,8 @@
 pipeline {
-        // agent any
         agent {
             docker {
                 image 'node:23-alpine'
-                args '-p 3000:3000 -v /var/lib/jenkins/.npm:/root/.npm'
+                args '-p 3000:3000'
             }
         }
         environment {
@@ -20,9 +19,7 @@ pipeline {
             stage('Build') {
                 steps {
                     script {
-                        sh 'rm -rf node_modules'
-                        sh 'npm config set cache /root/.npm --global'
-                        sh 'npm install --loglevel=verbose --unsafe-perm'
+                        sh 'npm install'
                     }
                 }
             }
@@ -32,14 +29,13 @@ pipeline {
                     sh './jenkins/scripts/test.sh'
                 }
             }
-            
-            // stage('Docker Build') {
-            //     steps {
-            //         script {
-            //             sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
-            //     }
-            // }
-            // }
+            stage('Docker Build') {
+                steps {
+                    script {
+                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
+                }
+            }
+            }
             // stage('Docker Push') {
             //     steps {
             //         script {
