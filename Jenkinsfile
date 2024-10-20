@@ -1,8 +1,8 @@
 pipeline {
         agent {
             docker {
-                image 'arshad200/node-docker:3.0'
-                args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+                image 'node:23-alpine'
+                args '-p 3000:3000'
             }
         }
         environment {
@@ -61,3 +61,13 @@ pipeline {
             }
         }
     }
+
+
+
+
+// agent {
+//             docker {
+//                 image 'arshad200/node-docker:3.0'
+//                 args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+//             }
+//         }
