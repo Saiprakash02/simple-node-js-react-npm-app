@@ -16,14 +16,6 @@ pipeline {
                 }
             }
     
-            stage('Build') {
-                steps {
-                    script {
-                        sh 'npm install --loglevel=verbose'
-                    }
-                }
-            }
-    
             stage('Test') {
                 steps {
                     sh './jenkins/scripts/test.sh'
