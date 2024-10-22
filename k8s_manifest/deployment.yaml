@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactapp
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reactapp
+  template:
+    metadata:
+      labels:
+        app: reactapp
+    spec:
+      containers:
+        - name: reactapp
+          image: saiprakash02/reactapp:TAG
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "200Mi"
+            limits:
+              memory: "400Mi"
+              cpu: "50m"
+          ports:
+            - containerPort: 80
