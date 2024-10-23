@@ -1,19 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml '''
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: docker
-                image: docker:latest
-                command:
-                - cat
-                tty: true
-            '''
-        }
-    }
+    agent any
     environment {
         DOCKER_IMAGE = 'saiprakash02/reactapp01'
         AWS_REGION = 'us-east-1'
@@ -22,29 +8,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                container('docker') {
-                    git 'https://github.com/Saiprakash02/simple-node-js-react-npm-app.git'
-                }
+                git 'https://github.com/Saiprakash02/simple-node-js-react-npm-app.git'
             }
         }
 
         stage('Docker Build') {
             steps {
-                container('docker') {
-                    script {
-                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
-                    }
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
                 }
             }
         }
 
         stage('Docker Push') {
             steps {
-                container('docker') {
-                    script {
-                        withDockerRegistry(credentialsId: 'docker-cred') {
-                            sh "docker push ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                        }
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred') {
+                        sh "docker push ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
                     }
                 }
             }
@@ -52,14 +32,12 @@ pipeline {
 
         stage('Deploy to EKS Cluster') {
             steps {
-                container('docker') {
-                    script {
-                        withCredentials([kubeconfig(credentialsId: 'jenkinsk8s')]) {
-                            sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
-                            sh "kubectl apply -f k8s_manifest/namespace.yaml"
-                            sh "kubectl apply -f k8s_manifest/deployment.yaml"
-                            sh "kubectl apply -f k8s_manifest/service.yaml"
-                        }
+                script {
+                    withCredentials([kubeconfig(credentialsId: 'jenkinsk8s')]) {
+                        sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
+                        sh "kubectl apply -f k8s_manifest/namespace.yaml"
+                        sh "kubectl apply -f k8s_manifest/deployment.yaml"
+                        sh "kubectl apply -f k8s_manifest/service.yaml"
                     }
                 }
             }
