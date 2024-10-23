@@ -33,7 +33,7 @@ pipeline {
                     withCredentials([aws(credentialsId: 'aws-cred', region: AWS_REGION)]) {
                         dir('k8s_manifest') {
                             sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
-                            // sh "aws eks update-kubeconfig --region us-east-1 --name React-App-EKS"
+                            sh "aws eks update-kubeconfig --region us-east-1 --name React-App-EKS"
                             sh "kubectl apply -f namespace.yaml"
                             sh "kubectl apply -f deployment.yaml"
                             sh "kubectl apply -f service.yaml"
