@@ -15,7 +15,6 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    // Build the Docker image
                     sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
                 }
             }
@@ -34,11 +33,12 @@ pipeline {
         stage('Deploy to EKS Cluster') {
             steps {
                 script {
-                    kubernetesDeploy(
-                        configs: 'k8s_manifest/*.yaml',
-                        kubeconfigId: 'jenkinsk8s',
-                        enableConfigSubstitution: true
-                    )
+                    withCredentials([kubeconfig(credentialsId: 'your-kubeconfig-credentials-id')]) {
+                        sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
+                        sh "kubectl apply -f k8s_manifest/namespace.yaml"
+                        sh "kubectl apply -f k8s_manifest/deployment.yaml"
+                        sh "kubectl apply -f k8s_manifest/service.yaml"
+                    }
                 }
             }
         }
