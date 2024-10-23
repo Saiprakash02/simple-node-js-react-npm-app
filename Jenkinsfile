@@ -1,12 +1,8 @@
 pipeline {
-        agent {
-            docker {
-                image 'saiprakash02/nodedocker:1.0'
-                args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
-            }
-        }
+        agent any
         environment {
-            DOCKER_IMAGE = 'saiprakash02/reactapp'
+            DOCKER_IMAGE = 'saiprakash02/reactapp01'
+            AWS_REGION = 'us-east-1'
         }
     
         stages {
@@ -15,20 +11,7 @@ pipeline {
                     git 'https://github.com/Saiprakash02/simple-node-js-react-npm-app.git'
                 }
             }
-    
-            stage('Build') {
-                steps {
-                    script {
-                        sh 'npm ci'
-                    }
-                }
-            }
 
-            stage('Test') {
-                steps {
-                    sh './jenkins/scripts/test.sh'
-                }
-            }
             stage('Docker Build') {
                 steps {
                     script {
@@ -45,6 +28,21 @@ pipeline {
                     }
                 }
             }
+            stage('Deploy to EKS Cluster') {
+                steps {
+                    withCredentials([aws(credentialsId: 'aws-cred', region: AWS_REGION)]) {
+                        dir('k8s_manifest') {
+                            sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
+                            sh "aws eks update-kubeconfig --region us-east-1 --name React-App-EKS"
+                            sh "kubectl apply -f namespace.yaml"
+                            sh "kubectl apply -f deployment.yaml"
+                            sh "kubectl apply -f service.yaml"
+                    }
+                    echo "Deployed to EKS Cluster"
+                }
+                }
+            }
+    }
         }
     
         post {
