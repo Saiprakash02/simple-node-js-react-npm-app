@@ -30,7 +30,7 @@ pipeline {
             }
             stage('Deploy to kubernetes'){
                 steps{
-                    withAWS(credentials: 'aws-cred', region: AWS_REGION){
+                    withCredentials([aws(credentialsId: 'aws-cred', region: AWS_REGION)]) {
                         script{
                             withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkinsk8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
                             sh "sed -i 's#TAG#${BUILD_NUMBER}#g' k8s_manifest/deployment.yaml"
