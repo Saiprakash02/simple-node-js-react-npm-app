@@ -33,6 +33,7 @@ pipeline {
                     withCredentials([aws(credentialsId: 'aws-cred', region: AWS_REGION)]) {
                         script{
                             withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkinsk8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                            sh "sed -i 's#IMAGE#${DOCKER_IMAGE}#g' k8s_manifest/deployment.yaml"
                             sh "sed -i 's#TAG#${BUILD_NUMBER}#g' k8s_manifest/deployment.yaml"
                             sh 'kubectl apply -f k8s_manifest/namespace.yaml'
                             sh 'kubectl apply -f k8s_manifest/deployment.yaml'
