@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: reactapp
-          image: saiprakash02/reactapp:TAG
+          image: IMAGE:TAG
           resources:
             requests:
               cpu: "10m"
