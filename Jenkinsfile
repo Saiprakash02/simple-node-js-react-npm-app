@@ -8,7 +8,7 @@ pipeline {
         stages {
             stage('Checkout') {
                 steps {
-                    git 'https://github.com/Saiprakash02/simple-node-js-react-npm-app.git'
+                    checkout scm
                 }
             }
 
