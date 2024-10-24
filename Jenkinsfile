@@ -28,18 +28,18 @@ pipeline {
                     }
                 }
             }
-            stage('Deploy to EKS Cluster') {
-                steps {
-                    withCredentials([aws(credentialsId: 'aws-cred', region: AWS_REGION)]) {
-                        dir('k8s_manifest') {
-                            sh "sed -i 's#TAG#${BUILD_NUMBER}#g' deployment.yaml"
-                            sh "aws eks update-kubeconfig --region us-east-1 --name React-App-EKS"
-                            sh "kubectl apply -f namespace.yaml"
-                            sh "kubectl apply -f deployment.yaml"
-                            sh "kubectl apply -f service.yaml"
+            stage('Deploy to kubernetes'){
+                steps{
+                    withAWS(credentials: 'aws-cred', region: AWS_REGION){
+                        script{
+                            withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkinsk8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                            sh "sed -i 's#TAG#${BUILD_NUMBER}#g' k8s_manifest/deployment.yaml"
+                            sh 'kubectl apply -f k8s_manifest/namespace.yaml'
+                            sh 'kubectl apply -f k8s_manifest/deployment.yaml'
+                            sh 'kubectl apply -f k8s_manifest/service.yaml'
+                            }
+                        }
                     }
-                    echo "Deployed to EKS Cluster"
-                }
                 }
             }
         }
