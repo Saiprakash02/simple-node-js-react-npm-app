@@ -1,7 +1,7 @@
 pipeline {
         agent any
         environment {
-            DOCKER_IMAGE = 'saiprakash02/reactapp01'
+            DOCKER_IMAGE = 'saiprakash02/reacteksapp'
             AWS_REGION = 'us-east-1'
         }
     
