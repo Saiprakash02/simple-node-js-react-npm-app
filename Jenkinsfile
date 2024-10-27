@@ -25,30 +25,16 @@ pipeline {
             //         sh './jenkins/scripts/test.sh'
             //     }
             // }
-            // stage('Docker Build') {
-            //     steps {
-            //         script {
-            //             sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
-            //     }
-            // }
-            // }
-
-            stage('Login to docker hub') {
-            steps {
+            stage('Docker Build') {
+                steps {
                     script {
-                withDockerRegistry(credentialsId: 'docker-cred') {
-                echo 'Login successfully'
-            } } }
-        }
-        stage('Build Docker Image')
-        {
-            steps
-            {
-                sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} . "
-                echo "Docker image build successfully"
-                sh "docker images"
+                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
+                        echo "Docker image build successfully"
+                        sh "docker images"
+                }
             }
-        }
+            }
+
         stage("TRIVY"){
             steps{
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
