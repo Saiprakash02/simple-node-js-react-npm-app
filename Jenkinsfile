@@ -35,9 +35,10 @@ pipeline {
 
             stage('Login to docker hub') {
             steps {
-                withDockerRegistry(credentialsId: 'docker-cred')
+                    script {
+                withDockerRegistry(credentialsId: 'docker-cred') {
                 echo 'Login successfully'
-            }
+            } } }
         }
         stage('Build Docker Image')
         {
