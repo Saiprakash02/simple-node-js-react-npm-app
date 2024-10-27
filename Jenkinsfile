@@ -44,7 +44,7 @@ pipeline {
         {
             steps
             {
-                sh "sudo docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} . :
+                sh "sudo docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} . "
                 echo "Docker image build successfully"
                 sh "sudo docker images"
             }
