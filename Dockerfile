@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:lts-buster-slim
 WORKDIR /usr/nodejsapp
 COPY . .
 RUN npm install
