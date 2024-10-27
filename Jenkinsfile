@@ -36,7 +36,7 @@ pipeline {
             stage('Trivy Scan') {
             steps {
                 script {
-                    sh 'trivy image --exit-code 1 my-image:latest'
+                    sh 'trivy image --exit-code 1 ${DOCKER_IMAGE}:${env.BUILD_ID}'
                 }
             }
         }
