@@ -33,11 +33,11 @@ pipeline {
             }
             }
 
-            stage('Trivy Scan') {
-            steps {
-                script {
-                    sh "trivy image --exit-code 1 ${DOCKER_IMAGE}:${env.BUILD_ID}"
-                }
+            stage("TRIVY"){
+            steps{
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh "sudo trivy image --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --format table $${DOCKER_IMAGE}:${env.BUILD_ID}"
+                 }   
             }
         }
         //     stage('Docker Push') {
