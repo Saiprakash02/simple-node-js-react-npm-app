@@ -25,15 +25,31 @@ pipeline {
             //         sh './jenkins/scripts/test.sh'
             //     }
             // }
-            stage('Docker Build') {
-                steps {
-                    script {
-                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
-                }
-            }
-            }
+            // stage('Docker Build') {
+            //     steps {
+            //         script {
+            //             sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
+            //     }
+            // }
+            // }
 
-            stage("TRIVY"){
+            stage('Login to docker hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                sh 'sudo docker login -u ${USERNAME} -p ${PASSWORD}'}
+                echo 'Login successfully'
+            }
+        }
+        stage('Build Docker Image')
+        {
+            steps
+            {
+                sh "sudo docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} . :
+                echo "Docker image build successfully"
+                sh "sudo docker images"
+            }
+        }
+        stage("TRIVY"){
             steps{
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     sh "sudo trivy image --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${env.BUILD_ID}"
