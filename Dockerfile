@@ -1,4 +1,4 @@
-FROM node:23-alpine AS build
+FROM node:18-alpine
 WORKDIR /usr/nodejsapp
 COPY . .
 RUN npm install
