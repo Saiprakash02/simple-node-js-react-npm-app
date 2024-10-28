@@ -12,9 +12,7 @@ pipeline {
         }
         stage('Audit Dependencies') {
             steps {
-                catchError(buildResult: 'SUCCESS') {
-                    sh 'npm audit --omit=dev'
-                }
+                sh 'npm audit fix'
             }
         }
         stage('Run Tests') {
