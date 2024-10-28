@@ -29,30 +29,27 @@ pipeline {
                 }
             }
         }
-
-
-        stage("Quality Gate") {
+        stage('Quality Gate') {
             steps {
-                script {
-                    timeout(time: 1, unit: 'HOURS') {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitUntil {
+                        script {
+                            def qualityGate = waitForQualityGate()
+                            return qualityGate.status == 'OK'
                         }
                     }
                 }
             }
         }
-
-        // stage('Owasp Dependency Check') {
-        //     steps {
-        //         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-        //             timeout(time: 60, unit: 'MINUTES') {
-        //                 dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dependency-check'
-        //                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Owasp Dependency Check') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    timeout(time: 60, unit: 'MINUTES') {
+                        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dependency-check'
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    }
+                }
+            }
+        }
     }
 }
