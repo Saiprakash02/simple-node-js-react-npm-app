@@ -10,6 +10,11 @@ pipeline {
                 sh 'npm ci'
             }
         }
+        stage('Audit Dependencies') {
+            steps {
+                sh 'npm audit --production'
+            }
+        }
         stage('Run Tests') {
             steps {
                 sh 'npm test'
