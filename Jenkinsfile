@@ -1,68 +1,67 @@
 pipeline {
-        agent any
-        environment {
-            DOCKER_IMAGE = 'saiprakash02/reactapp'
-        }
+    agent any
+    tools {
+        maven 'maven3'
+    }
     
-        stages {
-            stage('Checkout') {
-                steps {
-                    git 'https://github.com/Saiprakash02/simple-node-js-react-npm-app.git'
-                }
-            }
+    environment {
+        SCANNER_HOME = tool 'sonarscanner'
+    }
     
-            // stage('Build') {
-            //     steps {
-            //         script {
-            //             sh 'npm ci'
-            //         }
-            //     }
-            // }
-
-            
-            // stage('Test') {
-            //     steps {
-            //         sh './jenkins/scripts/test.sh'
-            //     }
-            // }
-            stage('Docker Build') {
-                steps {
-                    script {
-                        sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
-                        echo "Docker image build successfully"
-                        sh "docker images"
-                }
-            }
-            }
-
-        stage("TRIVY"){
-            steps{
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh "trivy image --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${env.BUILD_ID}"
-                 }   
+    stages {
+        stage("compile") {
+            steps {
+                sh "mvn compile"
             }
         }
-        //     stage('Docker Push') {
-        //         steps {
-        //             script {
-        //                 withDockerRegistry(credentialsId: 'docker-cred') {
-        //                     sh "docker push ${DOCKER_IMAGE}:${env.BUILD_ID}"
-        //                 }
+        
+        stage('test') {
+            steps {
+                sh "mvn test"
+            }
+        }
+
+        stage('install') {
+            steps {
+                sh "mvn clean install"
+            }
+        }
+
+        stage("Sonarqube Analysis") {
+            steps {
+                withSonarQubeEnv('sonarqube-server') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonarscanner \
+                        -Dsonar.projectName=ReactApp \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.projectKey=ReactApp
+                    '''
+                }
+            }
+        }
+
+        stage("Quality Gate") {
+            steps {
+                script {
+                    timeout(time: 1, unit: 'HOURS') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
+
+        // stage('Owasp Dependency Check') {
+        //     steps {
+        //         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //             timeout(time: 60, unit: 'MINUTES') {
+        //                 dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dependency-check'
+        //                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         //             }
         //         }
         //     }
         // }
-    
-        // post {
-        //     success {
-        //         mail to: 'saiprakash0229@gmail.com',
-        //              subject: "Build Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
-        //              body: "The build was successful! Check it out at ${env.BUILD_URL}"
-        //     }
-        //     failure {
-        //         mail to: 'saiprakash0229@gmail.com',
-        //              subject: "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
-        //              body: "The build failed! Check it out at ${env.BUILD_URL}"
-        //     }
-        }
     }
+}
