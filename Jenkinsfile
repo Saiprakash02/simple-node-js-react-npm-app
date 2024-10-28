@@ -12,7 +12,7 @@ pipeline {
         }
         stage('Audit Dependencies') {
             steps {
-                sh 'npm audit --production'
+                sh 'npm audit --omit=dev'
             }
         }
         stage('Run Tests') {
