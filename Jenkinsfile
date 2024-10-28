@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:lts-buster-slim'
+        }
+    }
     environment {
         SCANNER_HOME = tool 'sonarscanner'
     }
