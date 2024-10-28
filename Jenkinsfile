@@ -9,25 +9,17 @@ pipeline {
     }
     
     stages {
-        // stage("compile") {
-        //     steps {
-        //         sh "mvn compile"
-        //     }
-        // }
-        
-        // stage('test') {
-        //     steps {
-        //         sh "mvn test"
-        //     }
-        // }
-
-        // stage('install') {
-        //     steps {
-        //         sh "mvn clean install"
-        //     }
-        // }
-
-        stage("Sonarqube Analysis") {
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Sonarqube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
                     sh '''
