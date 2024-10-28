@@ -31,7 +31,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
                     sh '''
-                        $SCANNER_HOME/bin/sonarscanner \
+                        $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectName=ReactApp \
                         -Dsonar.java.binaries=. \
                         -Dsonar.projectKey=ReactApp
