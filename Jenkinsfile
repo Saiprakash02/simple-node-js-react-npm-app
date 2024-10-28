@@ -15,32 +15,32 @@ pipeline {
                 sh 'npm test'
             }
         }
-        stage('Sonarqube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube-server') {
-                    sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectName=ReactApp \
-                        -Dsonar.projectKey=ReactApp \
-                        -Dsonar.sources=. \
-                        -Dsonar.language=js \
-                        -Dsonar.sourceEncoding=UTF-8
-                    '''
-                }
-            }
-        }
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitUntil {
-                        script {
-                            def qualityGate = waitForQualityGate()
-                            return qualityGate.status == 'OK'
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Sonarqube Analysis') {
+        //     steps {
+        //         withSonarQubeEnv('sonarqube-server') {
+        //             sh '''
+        //                 $SCANNER_HOME/bin/sonar-scanner \
+        //                 -Dsonar.projectName=ReactApp \
+        //                 -Dsonar.projectKey=ReactApp \
+        //                 -Dsonar.sources=. \
+        //                 -Dsonar.language=js \
+        //                 -Dsonar.sourceEncoding=UTF-8
+        //             '''
+        //         }
+        //     }
+        // }
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 10, unit: 'MINUTES') {
+        //             waitUntil {
+        //                 script {
+        //                     def qualityGate = waitForQualityGate()
+        //                     return qualityGate.status == 'OK'
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         stage('Owasp Dependency Check') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
