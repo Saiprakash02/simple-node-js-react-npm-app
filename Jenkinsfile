@@ -9,23 +9,23 @@ pipeline {
     }
     
     stages {
-        stage("compile") {
-            steps {
-                sh "mvn compile"
-            }
-        }
+        // stage("compile") {
+        //     steps {
+        //         sh "mvn compile"
+        //     }
+        // }
         
-        stage('test') {
-            steps {
-                sh "mvn test"
-            }
-        }
+        // stage('test') {
+        //     steps {
+        //         sh "mvn test"
+        //     }
+        // }
 
-        stage('install') {
-            steps {
-                sh "mvn clean install"
-            }
-        }
+        // stage('install') {
+        //     steps {
+        //         sh "mvn clean install"
+        //     }
+        // }
 
         stage("Sonarqube Analysis") {
             steps {
@@ -33,12 +33,15 @@ pipeline {
                     sh '''
                         $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectName=ReactApp \
-                        -Dsonar.java.binaries=. \
-                        -Dsonar.projectKey=ReactApp
+                        -Dsonar.projectKey=ReactApp \
+                        -Dsonar.sources=. \
+                        -Dsonar.language=js \
+                        -Dsonar.sourceEncoding=UTF-8
                     '''
                 }
             }
         }
+
 
         stage("Quality Gate") {
             steps {
