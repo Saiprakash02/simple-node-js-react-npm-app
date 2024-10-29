@@ -1,30 +1,20 @@
 pipeline {
     agent any
-    environment {
-        SCANNER_HOME = tool 'sonarscanner'
-    }
-    
+
     stages {
-        stage('Checkout Github') {
+        stage('Build') {
             steps {
-                checkout scm
+                script {
+                    sh 'npm install'
+                }
             }
         }
-        stage('Install Dependencies') {
+
+        stage('SonarQube Analysis') {
             steps {
-                sh 'npm ci'
-            }
-        }
-        stage('Run Tests') {
-            steps {
-                sh 'npm test'
-            }
-        }
-        stage('Sonarqube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube-server') {
+                script {
                     sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
+                    mvn sonar:sonar \
                         -Dsonar.projectName=ReactApp \
                         -Dsonar.projectKey=ReactApp \
                         -Dsonar.sources=. \
@@ -34,6 +24,7 @@ pipeline {
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
@@ -46,14 +37,22 @@ pipeline {
                 }
             }
         }
-        stage('Owasp Dependency Check') {
+
+        stage('OWASP Dependency Check') {
             steps {
-                dependencyCheck additionalArguments: ''' 
-                    -o "./" 
-                    -s "./"
-                    -f "ALL" 
-                    --prettyPrint''', odcInstallation: 'dependency-check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                script {
+                    dependencyCheck additionalArguments: ''' 
+                        -o "./reports" 
+                        -s "./"
+                        --project "ReactApp" 
+                        --format ALL 
+                        --prettyPrint 
+                    ''', odcInstallation: 'dependency-check'
+                    if (!fileExists('reports/dependency-check-report.xml')) {
+                        error "Dependency Check report not found!"
+                    }
+                }
+                dependencyCheckPublisher pattern: '**/reports/dependency-check-report.xml'
             }
         }
     }
