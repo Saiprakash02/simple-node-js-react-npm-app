@@ -41,15 +41,15 @@ pipeline {
                 }
             }
         }
-        // stage('Owasp Dependency Check') {
-        //     steps {
-        //         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-        //             timeout(time: 60, unit: 'MINUTES') {
-        //                 dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dependency-check'
-        //                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Owasp Dependency Check') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    timeout(time: 60, unit: 'MINUTES') {
+                        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dependency-check'
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    }
+                }
+            }
+        }
     }
 }
