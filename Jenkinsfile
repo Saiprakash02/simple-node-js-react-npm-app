@@ -43,7 +43,11 @@ pipeline {
         }
         stage('Owasp Dependency Check') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./ --log DEBUG', odcInstallation: 'dependency-check'
+                dependencyCheck additionalArguments: ''' 
+                    -o "./" 
+                    -s "./"
+                    -f "ALL" 
+                    --prettyPrint''', odcInstallation: 'dependency-check'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
