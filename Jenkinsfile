@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        SCANNER_HOME = tool 'sonarscanner'
+        }    
     stages {
         stage('Build') {
             steps {
@@ -12,9 +14,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
+                withSonarQubeEnv('sonar-server') {
                     sh '''
-                    mvn sonar:sonar \
+                    $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectName=ReactApp \
                         -Dsonar.projectKey=ReactApp \
                         -Dsonar.sources=. \
