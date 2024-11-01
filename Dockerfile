@@ -1,4 +1,4 @@
-FROM node:lts-buster-slim
+FROM node
 WORKDIR /usr/nodejsapp
 COPY . .
 RUN npm install
