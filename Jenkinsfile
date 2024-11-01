@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker volume create data'
-                    sh 'docker run --rm -i -v $PWD:/data hadolint/hadolint:latest-debian < Dockerfile > data/hadolint_output.txt'
+                    sh 'docker run --rm -i -v $PWD:/data hadolint/hadolint:latest-debian < Dockerfile > hadolint_output.txt'
                 }
             }
         }
