@@ -1,15 +1,22 @@
 pipeline {
     agent any
+
     stages {
-        stage('Lint Dockerfile') {
-            agent {
-                docker {
-                    image 'hadolint/hadolint:latest-alpine'
-                }
-            }
+        stage('Clone Repository') {
             steps {
-                sh 'hadolint Dockerfile > hadolint_output.txt'
-                sh 'cat hadolint_output.txt'
+                git url: 'https://github.com/your-username/your-repo.git', branch: 'main'
+            }
+        }
+        
+        stage('Lint Dockerfile') {
+            steps {
+                sh 'docker run --rm -i hadolint/hadolint:latest-debian < Dockerfile > hadolint_output.txt'
+            }
+        }
+        
+        stage('Archive Output') {
+            steps {
+                archiveArtifacts artifacts: 'hadolint_output.txt', allowEmptyArchive: true
             }
         }
     }
