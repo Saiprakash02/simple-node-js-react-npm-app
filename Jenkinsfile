@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tool { 
+        docker 'docker'
+    }
     stages {
         stage('Clone Repository') {
             steps {
@@ -10,17 +12,8 @@ pipeline {
 
         stage('Lint Dockerfile') {
             steps {
-                script {
-                    docker.image('hadolint/hadolint:latest').inside {
-                        sh 'hadolint Dockerfile > hadolint_output.txt'
-                    }
-                }
-            }
-        }
-
-        stage('Archive Output') {
-            steps {
-                archiveArtifacts artifacts: 'hadolint_output.txt', allowEmptyArchive: true
+                sh 'docker run --rm -i hadolint/hadolint < Dockerfile > hadolint_output.txt'
+                // sh 'cat hadolint_output.txt'
             }
         }
     }
