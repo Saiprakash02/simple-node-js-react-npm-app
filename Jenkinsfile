@@ -15,10 +15,10 @@ pipeline {
                         docker run --rm \
                         -v data:/data_output \
                         -v $PWD:/data \
-                        hadolint/hadolint sh -c "mkdir -p /data_output && hadolint /data/Dockerfile > /data_output/hadolint_output.txt 2>&1"
+                        hadolint/hadolint hadolint /data/Dockerfile > /data_output/hadolint_output.txt 2>&1 || true
                     '''
                     sh '''
-                        docker run --rm -v data:/data_output busybox sh -c "ls -l /data_output"
+                        docker run --rm -v data:/data_output busybox ls -l /data_output
                     '''
                 }
             }
