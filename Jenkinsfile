@@ -10,7 +10,11 @@ pipeline {
             steps {
                 script {
                     sh 'docker volume create data'
-                    sh 'docker run --rm -v $PWD:/data -i hadolint/hadolint hadolint data/Dockerfile > hadolint_output.txt || true'
+                    sh '''
+                        docker run --rm \
+                        -v $PWD:/data \
+                        hadolint/hadolint hadolint /data/Dockerfile > hadolint_output.txt 2>&1 || true
+                    '''
                     sh 'cat hadolint_output.txt'
                 }
             }
