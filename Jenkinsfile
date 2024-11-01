@@ -1,26 +1,26 @@
 pipeline {
-    agent any   
+    agent any
+
     stages {
-        stage('git checkout') {
+        stage('Clone Repository') {
             steps {
                 checkout scm
-                }
             }
-        stage('Hadolind') {
+        }
+
+        stage('Lint Dockerfile') {
             steps {
                 script {
-                    sh 'docker volume create data'
-                    sh 'docker volume create data_output'
-                    sh '''
-                        docker run --rm \
-                        -v data:/data_output \
-                        -v $PWD:/data \
-                        hadolint/hadolint hadolint /data/Dockerfile > /data_output/hadolint_output.txt 2>&1 || true
-                    '''
-                    sh '''
-                        docker run --rm -v data:/data_output busybox ls -l /data_output
-                    '''
+                    docker.image('hadolint/hadolint:latest').inside {
+                        sh 'hadolint Dockerfile > hadolint_output.txt'
+                    }
                 }
+            }
+        }
+
+        stage('Archive Output') {
+            steps {
+                archiveArtifacts artifacts: 'hadolint_output.txt', allowEmptyArchive: true
             }
         }
     }
