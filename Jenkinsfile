@@ -10,7 +10,7 @@ pipeline {
         
         stage('Lint Dockerfile') {
             steps {
-                sh 'docker run --rm -i hadolint/hadolint:latest-debian < Dockerfile > hadolint_output.txt'
+                sh 'docker run --rm -i hadolint/hadolint:latest-debian Dockerfile > hadolint_output.txt'
             }
         }
         
