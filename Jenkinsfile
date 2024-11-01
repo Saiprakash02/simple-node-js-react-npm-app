@@ -10,7 +10,10 @@ pipeline {
         
         stage('Lint Dockerfile') {
             steps {
-                sh 'docker run --rm -i hadolint/hadolint:latest-debian Dockerfile > hadolint_output.txt'
+                script {
+                    sh 'docker volume create data'
+                    sh 'docker run --rm -i -v $PWD:/data hadolint/hadolint:latest-debian < data/Dockerfile > data/hadolint_output.txt'
+                }
             }
         }
         
