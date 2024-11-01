@@ -11,19 +11,7 @@ pipeline {
         stage('Lint Dockerfile') {
             steps {
                 script {
-                    sh 'docker volume create data'
-                    sh '''
-                        docker run --rm \
-                        -v $PWD:/data \
-                        -i hadolint/hadolint:latest-debian \
-                        sh -c "mkdir -p /data && hadolint /data/Dockerfile > /data/hadolint_output.txt; echo $? > /data/hadolint_exit_code.txt"
-                    '''
-                    
-                    // Check exit code
-                    sh 'docker run --rm -v data:/data alpine cat /data/hadolint_exit_code.txt'
-                    
-                    // To view the Hadolint output
-                    sh 'docker run --rm -v data:/data alpine cat /data/hadolint_output.txt || echo "No output generated"'
+                    sh 'docker run --rm -i hadolint/hadolint < Dockerfile > hadolint_output.txt'
                 }
             }
         }
