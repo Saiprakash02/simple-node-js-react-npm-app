@@ -8,8 +8,11 @@ pipeline {
             }
         stage('Hadolind') {
             steps {
-                sh 'chmod +x script.sh'
-                sh './script.sh'
+                script {
+                    sh 'docker create volume data'
+                    sh 'docker run --rm -v $PWD:/data -i hadolint/hadolint < data/Dockerfile > data/hadolint_output.txt || true'
+                    sh 'cat hadolint_output.txt'
+                }
             }
         }
     }
