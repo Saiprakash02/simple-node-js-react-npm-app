@@ -8,8 +8,9 @@ pipeline {
             }
         stage('Hadolind') {
             steps {
-                sh 'chmod +x script.sh'
-                sh './script.sh'
+                script {
+                    sh "docker run --rm -i hadolint/hadolint < Dockerfile > hadolint_output.txt || true"
+                    sh "cat hadolint_output.txt"
             }
         }
     }
