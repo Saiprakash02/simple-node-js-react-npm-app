@@ -9,6 +9,7 @@ pipeline {
             }
             steps {
                 sh 'hadolint Dockerfile > hadolint_output.txt'
+                sh 'apk add cat'
                 sh 'cat hadolint_output.txt'
             }
         }
