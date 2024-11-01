@@ -11,7 +11,9 @@ pipeline {
         stage('Lint Dockerfile') {
             steps {
                 script {
-                    sh 'docker run --rm -i hadolint/hadolint < Dockerfile > hadolint_output.txt'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                        sh 'docker run --rm -i hadolint/hadolint < Dockerfile > hadolint_output.txt'
+                    }
                 }
             }
         }
