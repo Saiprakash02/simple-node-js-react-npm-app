@@ -8,6 +8,7 @@ pipeline {
             }
         stage('Hadolind') {
             steps {
+                sh 'chmod +x script.sh'
                 sh './script.sh'
             }
         }
