@@ -8,8 +8,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'apk add --no-cache coreutils'
                 sh 'hadolint Dockerfile > hadolint_output.txt'
+                sh 'cat hadolint_output.txt'
             }
         }
     }
